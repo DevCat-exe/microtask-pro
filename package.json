@@ -1,0 +1,29 @@
+{
+  "name": "microtask-pro",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.1.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "next-auth": "^4.24.10",
+    "mongodb": "6.15.0",
+    "mongoose": "8.12.1",
+    "bcryptjs": "2.4.3",
+    "jsonwebtoken": "9.0.2",
+    "react-hot-toast": "2.5.2",
+    "swiper": "11.2.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "tailwindcss": "^4"
+  }
+}
