@@ -1,18 +1,21 @@
-import { auth } from './auth';
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
 import { NextResponse } from 'next/server';
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-  const userRole = req.auth?.user?.role;
+  const user = req.auth?.user as any;
+  const userRole = user?.role;
 
   const isAuthRoute = nextUrl.pathname.startsWith('/auth');
   const isDashboardRoute = nextUrl.pathname.startsWith('/dashboard');
-  const isApiRoute = nextUrl.pathname.startsWith('/api');
 
   // 1. Redirect logged-in users away from auth pages
   if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL(`/dashboard/${userRole}`, nextUrl));
+    return NextResponse.redirect(new URL(`/dashboard/${userRole || 'worker'}`, nextUrl));
   }
 
   // 2. Protect dashboard routes
@@ -33,8 +36,8 @@ export default auth((req) => {
     }
     
     // Generic /dashboard redirect to specific role dashboard
-    if (nextUrl.pathname === '/dashboard') {
-       return NextResponse.redirect(new URL(`/dashboard/${userRole}`, nextUrl));
+    if (nextUrl.pathname === '/dashboard' || nextUrl.pathname === '/dashboard/') {
+       return NextResponse.redirect(new URL(`/dashboard/${userRole || 'worker'}`, nextUrl));
     }
   }
 

@@ -1,9 +1,10 @@
 import NextAuth from 'next-auth';
-import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import connectDB from './lib/db';
 import User from './models/User';
+import { authConfig } from './auth.config';
 
 export const {
   handlers: { GET, POST },
@@ -11,6 +12,7 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  ...authConfig,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -26,7 +28,7 @@ export const {
             email: profile.email,
             googleId: profile.sub,
             photoUrl: profile.picture,
-            role: 'worker', // Default role
+            role: 'worker', 
           });
           return {
             id: newUser._id.toString(),
@@ -87,36 +89,4 @@ export const {
       },
     }),
   ],
-  session: {
-    strategy: 'jwt',
-  },
-  callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.coins = user.coins;
-      }
-      
-      if (trigger === 'update' && session) {
-        token.coins = session.coins;
-        token.role = session.role;
-      }
-      
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.coins = token.coins as number;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: '/auth/login',
-    error: '/auth/error',
-  },
-  secret: process.env.NEXTAUTH_SECRET,
 });
